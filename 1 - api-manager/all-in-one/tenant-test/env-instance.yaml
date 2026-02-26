@@ -622,7 +622,7 @@ wso2:
     # Indicates whether the container starting
     startupProbe:
       # -- Number of seconds after the container has started before startup probes are initiated
-      initialDelaySeconds: 600
+      initialDelaySeconds: 300
       # -- How often (in seconds) to perform the probe
       periodSeconds: 10
       # -- Minimum consecutive successes for the probe to be considered successful after having failed
@@ -630,7 +630,7 @@ wso2:
     # Indicates whether the container is running
     livenessProbe:
       # -- Number of seconds after the container has started before liveness probes are initiated
-      initialDelaySeconds: 600
+      initialDelaySeconds: 300
       # -- How often (in seconds) to perform the probe
       periodSeconds: 10
       # -- Minimum consecutive successes for the probe to be considered successful after having failed
