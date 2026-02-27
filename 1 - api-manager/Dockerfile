@@ -1,4 +1,4 @@
-FROM registry.wso2.com/wso2-apim/am@sha256:2c24b895f7ef1c6c730182c7d5360638e27baef0af3c89e980b41468f41d5beb
+FROM --platform=${BUILDPLATFORM} registry.wso2.com/wso2-apim/am:4.6.0.13
 
 ARG USER=wso2carbon
 ARG USER_HOME=/home/${USER}
