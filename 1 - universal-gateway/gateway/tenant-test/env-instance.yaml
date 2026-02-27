@@ -394,9 +394,9 @@ wso2:
       # -- Container registry hostname
       registry: "docker.io"
       # -- Azure ACR repository name consisting the image
-      repository: "buddhim/bereke"
+      repository: "buddhim/bereke_amd-gw"
       # -- Docker image digest
-      digest: "sha256:ed8bbc4227d78a7c1c828f25b192b2d13b89e95eca635ea2e158ec93bb92d343"
+      digest: "sha256:feb64e67bfc244a2e85f321a2eb11937b92cd7b3f177252fce27fcc8c3ac2eb3"
       # -- Refer to the Kubernetes documentation on updating images (https://kubernetes.io/docs/concepts/containers/images/#updating-images)
       imagePullPolicy: Always
 

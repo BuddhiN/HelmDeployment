@@ -592,9 +592,9 @@ wso2:
       # -- Registry containing the image
       registry: "docker.io"
       # -- Repository name consisting the image
-      repository: "buddhim/bereke-all-in-one"
+      repository: "buddhim/bereke_amd-all-in-one"
       # -- Docker image digest
-      digest: "sha256:ebc7503f8c422e211b08f91a5e7c0b1bcfaaefbea33b31703d94c3239b0e9436"
+      digest: "sha256:6981725884934c72131a9a8529446f57d5bf7f6ff28c81a2597575f014cced28"
       # -- Refer to the Kubernetes documentation on updating images (https://kubernetes.io/docs/concepts/containers/images/#updating-images)
       imagePullPolicy: Always
 
