@@ -1,4 +1,4 @@
-FROM --platform=${BUILDPLATFORM} registry.wso2.com/wso2-apim/am-universal-gw:4.6.0.13
+FROM registry.wso2.com/wso2-apim/am-universal-gw:4.6.0.13
 
 ARG USER=wso2carbon
 ARG USER_HOME=/home/${USER}
