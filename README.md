@@ -7,9 +7,9 @@ This repository contains Helm charts and Docker configurations for deploying WSO
 This deployment pattern follows the **WSO2 API Manager Pattern 2** architecture, which is designed for scalable deployments separating the API control plane (All-in-One) from the gateway components (Universal Gateways).
 
 **Deployment Architecture:**
-- **1x API Manager All-in-One**: Control plane handling API management, governance, and Developer Portal
-- **2x Universal Gateways**: Distributed gateway instances for API traffic handling
-- **Separate Databases**: Dedicated databases for API Manager (`apim_db`) and shared data (`shared_db`)
+- *1x API Manager All-in-One*: Control plane handling API management, governance, and Developer Portal
+- *1x Universal Gateways*: Distributed gateway instances for API traffic handling
+- *Separate Databases*: Dedicated databases for API Manager (`apim_db`) and shared data (`shared_db`)
 
 For detailed information about this deployment pattern, refer to the [WSO2 API Manager Pattern 2 Documentation](https://apim.docs.wso2.com/en/latest/install-and-setup/setup/kubernetes-deployment/kubernetes/am-pattern-2-all-in-one-gw/).
 
@@ -20,17 +20,11 @@ For detailed information about this deployment pattern, refer to the [WSO2 API M
 ├── 1 - api-manager/              # All-in-One API Manager component
 │   ├── Dockerfile               # Custom Docker image for API Manager
 │   └── all-in-one/             # Helm chart for All-in-One deployment
-│       ├── Chart.yaml          # Chart metadata
-│       ├── values.yaml         # Default configuration values
-│       ├── confs/              # Configuration files
-│       │   ├── deployment.toml # Main configuration
-│       │   ├── log4j2.properties
-│       │   ├── secret-conf.properties
-│       │   └── frontend-confs/ # Frontend settings for Admin/Publisher/DevPortal
-│       └── templates/          # Kubernetes resource templates
-│           ├── _helpers.tpl
-│           ├── am/             # API Manager specific resources
-│           └── secrets/        # Secret configurations
+│       ├── Chart.yaml          
+│       ├── values.yaml        
+│       ├── confs/              
+│       └── templates/        
+│       └── tenant-test/          # helm resource templates 
 │
 ├── 1 - universal-gateway/       # Universal Gateway component
 │   ├── Dockerfile              # Custom Docker image for Gateway
@@ -38,22 +32,22 @@ For detailed information about this deployment pattern, refer to the [WSO2 API M
 │       ├── Chart.yaml
 │       ├── values.yaml
 │       ├── confs/
-│       │   ├── deployment.toml
-│       │   ├── log4j2.properties
-│       │   └── secret-conf.properties
 │       └── templates/
+│       └── tenant-test/          # helm resource templates 
 │
 ├── 2 - identity-server/         # WSO2 Identity Server (optional)
-│   ├── Dockerfile
+│   ├── Dockerfile              # Docker image for Identity Server
 │   └── identity-server/        # Helm chart for Identity Server
-│       └── ...
+│       ├── Chart.yaml
+│       ├── values.yaml
+│       ├── confs/
+│       └── templates/
+│       └── tenant-test/          # helm resource templates 
 │
-├── iam_policy.json             # IAM policy for cloud deployments
 ├── wso2carbon.jks              # WSO2 keystore
-├── client-truststore.jks       # Client truststore
+├── client-truststore.jks       # WSO2 Client truststore
 ├── tls.crt                     # TLS certificate for ingress
 ├── tls.key                     # TLS private key for ingress
-└── README.md                   # This file
 ```
 
 ## Prerequisites
@@ -76,7 +70,7 @@ Sample Dockkerfile contains WSO2 APIM image with update level 13
 
 #### Building Custom Images (Production Recommended)
 
-This repository includes Dockerfiles that add necessary PostgreSQL drivers. Build custom images: Prior
+This repository includes Dockerfiles that add necessary PostgreSQL drivers.
 
 ```bash
 # Build API Manager All-in-One image
@@ -101,7 +95,6 @@ Please follow WSO2 official documentations to change databases. These sample hel
 #### Create Databases
 
 ```bash
-# For MySQL
 psql -h <POSTGRE_HOST_IP> -U <USER_NAME> -W
 
 postgres# CREATE DATABASE apim_db;
@@ -145,10 +138,12 @@ kubectl create secret generic apim-keystore-secret --from-file=wso2carbon.jks --
 Edit the `tenant-test/env-instance.yaml` files for both API Manager and Gateway components.
 
 helm configuration can be found in following locations in the repository
-#### All-in-one Configuration (`1 - api-manager/all-in-one/tenant-test/env-instance.yaml`)
-#### Gateway Configuration (`1 - universal-gateway/gateway/tenant-test/env-instance.yaml`)
 
-Update the following sections:
+##### All-in-one Configuration (`1 - api-manager/all-in-one/tenant-test/env-instance.yaml`)
+##### Gateway Configuration (`1 - universal-gateway/gateway/tenant-test/env-instance.yaml`)
+
+
+Update the following sections in helm charts:
 
 ```yaml
 wso2:
@@ -186,13 +181,17 @@ wso2:
 ```
 ### Step 3: Deploy Using Helm
 
-Command contains deployment to Kubernertese default namespace. User your prefered namespace with -n flag
+API Manager instances deploy to Kubernertese default namespace. User your prefered namespace with -n flag. Ingress controller is deployed in **ingress-nginx** namespace
 
 #### Deploy All-in-One
+```bash
 helm install apim wso2/wso2am-all-in-one --version 4.6.0-1 -f 1 - api-manager/all-in-one/tenant-test/env-instance.yaml
+```
 
 #### Deploy Universal Gateway
+```bash
 helm install apim-gw wso2/wso2am-universal-gw --version 4.6.0-1 -f 1 - universal-gateway/gateway/tenant-test/env-instance.yaml
+```
 
 ### Step 4: Verify Deployment
 
@@ -207,7 +206,7 @@ kubectl get svc
 kubectl get ingress -n ingress-nginx 
 
 # Get external IP
-kubectl get ingress -o wide
+kubectl get ingress -n ingress-nginx -o wide
 
 # View logs
 kubectl logs -f pod-name
@@ -218,7 +217,7 @@ kubectl logs -f pod-name
 #### Get External IP
 
 ```bash
-kubectl get ingress -n wso2
+kubectl get ingress -n ingress-nginx
 ```
 
 #### Add DNS Records
