@@ -264,6 +264,124 @@ Once deployed and DNS is configured, access the following:
 - Username: `admin`
 - Password: `admin` (change in production)
 
+
+## WSO2 Identity Server Deployment (Optional)
+
+The repository includes optional standalone WSO2 Identity Server Helm Deployment Configurations.
+WSO2 Official Documentation [Deploy-is-on-kubernetes](https://is.docs.wso2.com/en/latest/deploy/deploy-is-on-kubernetes/)
+
+### Identity Server Prerequisites
+
+- WSO2 Identity Server 7.2.0 or higher
+- Separate Kubernetes namespace for IS deployment (e.g., `wso2-is`)
+
+### Installing Identity Server
+
+#### Step 1: Set Up Environment Variables
+
+```bash
+export IS_NAMESPACE=wso2-is
+export IS_RELEASE_NAME=is
+```
+
+#### Step 2: Create Kubernetes Namespace
+
+```bash
+kubectl create namespace $IS_NAMESPACE
+```
+
+#### Step 3: Add WSO2 Helm Repository (if not already added)
+
+```bash
+helm repo add wso2 https://helm.wso2.com
+helm repo update
+```
+
+#### Step 4: Install Identity Server from Repository
+
+```bash
+helm install $IS_RELEASE_NAME wso2/identity-server \
+  --version 7.2.0 \
+  -n $IS_NAMESPACE \
+  --set deployment.image.registry="wso2" \
+  --set deployment.image.repository="wso2is" \
+  --set deployment.image.tag="7.2.0" \
+  --set deployment.apparmor.enabled="false"
+```
+
+**Or** Install from Source:
+
+```bash
+
+# Install from local chart
+helm install is wso2/identity-server $IS_RELEASE_NAME --version 7.2.0 \
+  -f env-instance.yaml \
+  --set deployment.image.registry="docker.io" \
+  --set deployment.image.repository="buddhim/wso2is-km" \
+  --set deployment.image.tag="1.0" \
+  --set deployment.apparmor.enabled="false"
+
+```
+
+### Identity Server DNS and Access
+
+#### Get External IP
+
+```bash
+kubectl get ingress -n $IS_NAMESPACE
+```
+
+#### Configure DNS
+
+Add DNS record mapping:
+```
+<EXTERNAL-IP> wso2is.example.com
+```
+
+Or add to `/etc/hosts` for development:
+```bash
+echo "<EXTERNAL-IP> wso2is.example.com" >> /etc/hosts
+```
+
+#### Access Identity Server
+
+- **Console**: `https://wso2is.example.com/console`
+- **My Account Portal**: `https://wso2is.example.com/myaccount`
+
+
+### Identity Server Helm Chart Repository
+
+For advanced configurations and additional options, refer to the [WSO2 Kubernetes Identity Server](https://github.com/wso2/kubernetes-is) repository.
+
+### Verify Identity Server Deployment
+
+```bash
+# Check pod status
+kubectl get pods -n $IS_NAMESPACE
+
+# View logs
+kubectl logs -n $IS_NAMESPACE -f your-pod-name
+
+# Verify service
+kubectl get svc -n $IS_NAMESPACE
+```
+## Contributing
+
+When contributing to this repository:
+
+1. Update Dockerfile when adding dependencies
+2. Keep `env-instance.yaml` consistent across charts
+3. Test changes in a local Kubernetes environment
+4. Document configuration changes in this README
+
+## Version Information
+
+- **WSO2 API Manager**: 4.6.0
+- **WSO2 Identity Server**: 7.2.0
+- **Kubernetes**: 1.35
+- **Helm**: v3.15.4
+- **Docker**: 27.4.0
+
 ## Configuration Options
 
 ### High Availability
@@ -315,22 +433,10 @@ appender.file.File=${carbon.home}/repository/logs/wso2carbon.log
 - [Pattern 2 Detailed Guide](https://apim.docs.wso2.com/en/latest/install-and-setup/setup/kubernetes-deployment/kubernetes/am-pattern-2-all-in-one-gw/)
 - [Helm APIM Charts](https://github.com/wso2/helm-apim/tree/4.6.x)
 - [Kubernetes Deployment Overview](https://apim.docs.wso2.com/en/latest/install-and-setup/setup/kubernetes-deployment/kubernetes/kubernetes-overview/)
-
-## Contributing
-
-When contributing to this repository:
-
-1. Update Dockerfile when adding dependencies
-2. Keep `env-instance.yaml` consistent across charts
-3. Test changes in a local Kubernetes environment
-4. Document configuration changes in this README
-
-## Version Information
-
-- **WSO2 API Manager**: 4.6.0
-- **Kubernetes**: 1.35
-- **Helm**: v3.15.4
-- **Docker**: 27.4.0
+- [WSO2 Container Guide](https://github.com/wso2/container-guide)
+- [WSO2 Identity Server Documentation](https://is.docs.wso2.com/)
+- [Identity Server Kubernetes Deployment](https://is.docs.wso2.com/en/latest/deploy/deploy-is-on-kubernetes/)
+- [Kubernetes Identity Server Helm Charts](https://github.com/wso2/kubernetes-is)
 
 ---
 
